@@ -10,3 +10,73 @@
   text-decoration: none;
   color: #ffffff;
 }
+
+.navbar {
+  background-color: #282730;
+  color: #ebebeb;
+}
+
+.example-fill-remaining-space {
+  /* This fills the remaining space, by using flexbox. 
+     Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+}
+
+.add-btn-wrapper {
+  margin-top: 2rem;
+  margin-left: 2rem;
+}
+
+.content-wrapper {
+  margin-top: 2rem;
+  margin-left: 2rem;
+}
+
+.new-btn {
+  border-radius: 28px;
+  padding-top: 4px;
+  outline: none;
+  padding-right: 25px;
+  padding-bottom: 4px;
+  background-color: #00b248;
+  i {
+    color: #4285f4;
+    font-size: 36px;
+    padding: 4px 20px 4px 0px;
+  }
+}
+
+.add-content-wrapper {
+  position: relative;
+  margin-top: 1rem;
+  width: 80%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 5px;
+}
+
+.new-menu {
+  width: 30rem;
+}
+
+.mat-menu-item {
+  // width: 70rem !important;
+}
+
+.folder-list {
+  margin-top: 0px !important;
+}
+
+.mat-list-item-content {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+.popup-cancel-btn {
+  margin-right: 1rem !important;
+}
+
+mat-form-field {
+  input {
+    width: 10rem !important;
+  }
+}

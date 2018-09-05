@@ -39,6 +39,12 @@ export class LoginComponent implements OnInit {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log('ERROR =>', errorCode, errorMessage);
+        this.snotifyService.error('Please create account first', {
+          position: SnotifyPosition.rightTop,
+          titleMaxLength: 180,
+          showProgressBar: false,
+          pauseOnHover: true
+        });
         this.router.navigate(['/signup']);
       });
   }

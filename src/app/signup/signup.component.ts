@@ -40,15 +40,11 @@ export class SignupComponent implements OnInit {
         });
       this.router.navigate(['/home']);
     } else {
-      this.snotifyService.create({
-        title: 'passwords do not match',
-        body: null,
-        config: {
-          position: SnotifyPosition.rightTop,
-          titleMaxLength: 180,
-          showProgressBar: false
-          // type: SnotifyService.SnotifyStyle.error
-        }
+      this.snotifyService.error('passwords do not match', {
+        position: SnotifyPosition.rightTop,
+        titleMaxLength: 180,
+        showProgressBar: false
+        // type: SnotifyService.SnotifyStyle.error
       });
     }
   }

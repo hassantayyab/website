@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="#">Navbar</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
     aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,6 @@
     </form>
     <ul class="navbar-nav justify-content-end">
       <li class="nav-item active">
-        <!-- <a class="nav-link" href="#">Signout<span class="sr-only">(current)</span></a> -->
         <button type="button" (click)="onSignout()" class="btn btn-danger mr-2 ml-5">Signout<span class="sr-only">(current)</span></button>
       </li>
       <li class="nav-item active">
@@ -40,4 +39,55 @@
       </li>
     </ul>
   </div>
-</nav>
+</nav> -->
+
+<!-- Navbar Starts -->
+<mat-toolbar class="navbar">
+  <span>Website</span>
+  <span><button mat-flat-button color="warn" (click)="onSignout()">Logout</button></span>
+</mat-toolbar>
+<!-- Navbar Ends -->
+
+<!-- Content Starts -->
+
+<!-- Add Button Starts -->
+<div class="add-btn-wrapper">
+  <section class="mat-typography pb-2">
+    <h1>A place to create your own Imagination</h1>
+  </section>
+  <button mat-raised-button class="new-btn" [matMenuTriggerFor]="menu"><i class="fas fa-plus"></i>New</button>
+  <!-- Add Button Menu Starts -->
+  <div class="add-content-wrapper">
+    <mat-menu class="new-menu" #menu="matMenu">
+      <button mat-menu-item (click)="openDialog()" style="padding-right: 10rem; outline: none;">
+        <mat-icon mat-list-icon class="folder-list">create_new_folder
+        </mat-icon>
+        <span mat-line style="float: right;">Folder</span>
+      </button>
+      <mat-divider></mat-divider>
+      <button mat-menu-item (click)="openDialog()" style="padding-right: 10rem; outline: none;">
+        <mat-icon mat-list-icon>note
+        </mat-icon>
+        <span mat-line style="float: right;">Upload</span>
+      </button>
+    </mat-menu>
+  </div>
+  <!-- Add Button Menu Ends -->
+
+  <!-- Add Button Menu Starts -->
+</div>
+
+<div class="content-wrapper">
+  <section class="mat-typography pb-2 pt-4">
+    <h2>Your Data</h2>
+  </section>
+  <mat-selection-list>
+    <mat-list-option *ngFor="let folder of folders">
+      <span (click)="folderClicked(folder)">{{folder}}</span>
+    </mat-list-option>
+  </mat-selection-list>
+</div>
+
+<!-- Add Button Ends -->
+
+<!-- Content Ends -->
