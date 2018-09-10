@@ -13,3 +13,12 @@ export interface SignedUser {
   uid: any;
   providerData: any;
 }
+
+export interface Folder {
+  name: string;
+  updated: Date;
+}
+
+export interface Item {
+  content: Folder[];
+}

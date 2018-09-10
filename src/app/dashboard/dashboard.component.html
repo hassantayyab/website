@@ -1,0 +1,31 @@
+<!-- <p>
+  {{email}}
+</p>
+<p (click)="nameClicked()">{{name}}</p> -->
+
+<form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+  <div class="form-group">
+    <label for="email">email</label>
+    <input required class="form-control" type="text" [(ngModel)]="user.email" id="email" name="email" #email="ngModel">
+    <div [hidden]="email.valid || email.pristine" class="alert alert-danger">
+      Email is required
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="password">password</label>
+    <input required class="form-control" type="password" [(ngModel)]="user.password" id="password" name="password"
+      #password="ngModel">
+    <div *ngIf="!passwordValid && submitted" class="alert alert-danger">
+      Password is invalid
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-success" [disabled]="!loginForm.form.valid">Submit</button>
+</form>
+
+<p>{{user.email | uppercase}}</p>
+<p>{{user.password}}</p>
+<!-- <p>{{user.date | date | uppercase }}</p> -->
+
+<button mat-raised-button (click)="openDialog()">Pick one</button>

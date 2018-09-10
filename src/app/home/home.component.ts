@@ -1,10 +1,20 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { ItemsService } from './../services/items.service';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
+import {
+  AngularFirestore,
+  AngularFirestoreCollection,
+  AngularFirestoreDocument
+} from 'angularfire2/firestore';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-import { SignedUser } from '../models/user.model';
+import { SignedUser, Item, Folder } from '../models/user.model';
 
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatSort, MatTableDataSource } from '@angular/material';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-home',
@@ -12,14 +22,25 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+  sidenavType: any = { mode: 'push', drop: true };
+  loggedIn: boolean = false;
+  isLoading: boolean = true;
   user: SignedUser;
   menu: boolean = false;
   folderName: string;
-  folders: string[] = [];
+  folders: Folder[] = [];
+  dataSource: any;
+  displayedColumns: string[] = ['select', 'name', 'updated'];
+  selection = new SelectionModel<Folder>(true, []);
+
+  @ViewChild(MatSort)
+  sort: MatSort;
 
   constructor(
     public afAuth: AngularFireAuth,
+    private afs: AngularFirestore,
     private router: Router,
+    private itemsService: ItemsService,
     public dialog: MatDialog
   ) {
     this.user = {
@@ -33,11 +54,33 @@ export class HomeComponent implements OnInit {
     };
   }
 
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected()
+      ? this.selection.clear()
+      : this.dataSource.data.forEach(row => {
+          console.log('row =>', row);
+          this.selection.select(row);
+        });
+  }
+
   ngOnInit() {
-    console.log('folders =>', this.folders);
+    this.checkLogin();
+  }
+
+  folderClicked() {
+    console.log('clicked');
+  }
+
+  checkLogin() {
     this.afAuth.auth.onAuthStateChanged(user => {
       if (user) {
-        // User is signed in.
         this.user.displayName = user.displayName;
         this.user.email = user.email;
         this.user.emailVerified = user.emailVerified;
@@ -45,8 +88,23 @@ export class HomeComponent implements OnInit {
         this.user.isAnonymous = user.isAnonymous;
         this.user.uid = user.uid;
         this.user.providerData = user.providerData;
+        this.loggedIn = true;
+        this.itemsService.getFolders().subscribe(res => {
+          console.log('res =>', res[0].content);
+          if (res[0].content) {
+            this.folders = res[0].content;
+            this.dataSource = new MatTableDataSource(this.folders);
+            this.dataSource.sort = this.sort;
+            this.isLoading = false;
+            // this.folders.forEach(folder => {
+            //   folder.updated = new Date(folder.updated.toLocaleString());
+            // });
+            console.log('FOLDERS =>', this.folders);
+          }
+        });
 
         console.log('this.user =>', this.user);
+        console.log('loggedIn =>', this.loggedIn);
       } else {
         this.router.navigate(['/login']);
       }
@@ -65,23 +123,18 @@ export class HomeComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.folders.unshift(result);
-        this.storeFolders();
+        this.folders.unshift({ name: result, updated: new Date() });
+        console.log('this.folders =>', this.folders);
+        this.itemsService.addFolders({ content: this.folders }, this.user.uid);
       }
-      console.log('The dialog was closed', this.folders);
     });
-  }
-
-  storeFolders() {}
-
-  folderClicked(folder) {
-    console.log('folder clicked', folder);
   }
 }
 
+// Folder Popup Component
 @Component({
-  selector: 'dialog-overview-example-dialog',
-  templateUrl: 'dialog-overview-example-dialog.html'
+  selector: 'folder-popup',
+  templateUrl: 'folder-popup.html'
 })
 export class FolderPopup {
   constructor(
