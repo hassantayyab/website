@@ -74,8 +74,9 @@ export class HomeComponent implements OnInit {
     this.checkLogin();
   }
 
-  folderClicked() {
-    console.log('clicked');
+  folderDelete(i) {
+    this.folders.splice(i, 1);
+    this.itemsService.deleteFolder({ content: this.folders }, this.user.uid);
   }
 
   checkLogin() {
@@ -89,22 +90,21 @@ export class HomeComponent implements OnInit {
         this.user.uid = user.uid;
         this.user.providerData = user.providerData;
         this.loggedIn = true;
-        this.itemsService.getFolders().subscribe(res => {
-          console.log('res =>', res[0].content);
-          if (res[0].content) {
-            this.folders = res[0].content;
+        this.itemsService.getFolders(this.user.uid).subscribe(res => {
+          console.log('res =>', res);
+          // var id = JSON.parse(JSON.stringify(res))[0].id;
+          if (res.content) {
+            this.folders = res.content;
             this.dataSource = new MatTableDataSource(this.folders);
             this.dataSource.sort = this.sort;
             this.isLoading = false;
-            // this.folders.forEach(folder => {
-            //   folder.updated = new Date(folder.updated.toLocaleString());
-            // });
             console.log('FOLDERS =>', this.folders);
+          } else {
+            this.isLoading = false;
           }
         });
-
-        console.log('this.user =>', this.user);
-        console.log('loggedIn =>', this.loggedIn);
+        // console.log('this.user =>', this.user);
+        // console.log('loggedIn =>', this.loggedIn);
       } else {
         this.router.navigate(['/login']);
       }
@@ -144,5 +144,12 @@ export class FolderPopup {
 
   onNoClick(): void {
     this.dialogRef.close();
+  }
+
+  folderSubmitted(event) {
+    // console.log('event =>', event);
+    if (event.key === 'Enter') {
+      this.dialogRef.close();
+    }
   }
 }

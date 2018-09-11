@@ -13,19 +13,28 @@ import { Item, Folder } from '../models/user.model';
   providedIn: 'root'
 })
 export class ItemsService {
-  private folderCollection: AngularFirestoreCollection<Item | null>;
+  private folderCollection: any;
   folders: Observable<Item[]>;
 
   constructor(public afAuth: AngularFireAuth, private afs: AngularFirestore) {
-    this.folderCollection = this.afs.collection<Item>('folders');
-    this.folders = this.folderCollection.valueChanges();
   }
 
-  getFolders() {
+  getFolders(id: any): any {
+    this.folderCollection = this.afs.collection<Item>('folders').doc(id);
+    this.folders = this.folderCollection.valueChanges();
     return this.folders;
+    // this.folders = this.folderCollection.snapshotChanges().pipe(map(actions => actions.map(a => {
+    //   const data = a.payload.doc.data();
+    //   const id = a.payload.doc.id;
+    //   return { id, ...data };
+    // })))
+    // return this.folders;
   }
 
   addFolders(folders: Item, id: any) {
-    this.folderCollection.doc(id).set(folders);
+    this.folderCollection.set(folders);
   }
+
+  deleteFolder(folders: Item, id: any) {
+    this.folderCollection.set(folders);
 }

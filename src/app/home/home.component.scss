@@ -140,7 +140,30 @@ th.mat-sort-header-sorted {
   }
 }
 
-.table-list-item:hover {
-  background-color: #f1f1f1;
-  cursor: pointer;
+table {
+  thead {
+    tr {
+      border-top: none !important;
+      th {
+        border-top: 0;
+      }
+    }
+  }
+  tbody {
+    tr {
+      cursor: default;
+      td {
+        i {
+          color: #757575;
+          cursor: pointer;
+          font-size: 18px;
+        }
+      }
+    }
+  }
 }
+
+// .table-list-item:hover {
+//   background-color: #f1f1f1;
+//   cursor: pointer;
+// }
