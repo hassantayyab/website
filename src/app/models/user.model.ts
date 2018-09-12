@@ -22,3 +22,13 @@ export interface Folder {
 export interface Item {
   content: Folder[];
 }
+
+export interface File {
+  name: string;
+  updated: Date;
+  url: string;
+}
+
+export interface FileItem {
+  content: File[];
+}

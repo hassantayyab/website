@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="loggedIn">
   <!-- Navbar Starts -->
   <mat-toolbar class="navbar">
     <span>Website</span>
@@ -37,16 +37,18 @@
               <span mat-line style="float: right;">Folder</span>
             </button>
             <mat-divider></mat-divider>
-            <button mat-menu-item (click)="openDialog()" style="padding-right: 10rem; outline: none;">
-              <mat-icon mat-list-icon>note
-              </mat-icon>
-              <span mat-line style="float: right;">Upload</span>
+            <button mat-menu-item style="outline: none;padding: 0;">
+              <span mat-line><label for="file" class="upload-btn">
+                  <mat-icon mat-list-icon>note</mat-icon>Upload
+                </label><input (change)="onFileSelected($event)" type="file" id="file" name="file" class="inputfile">
+              </span>
             </button>
           </mat-menu>
         </div>
         <!-- Add Button Menu Ends -->
 
         <!-- Add Button Menu Starts -->
+
       </div>
 
       <!-- Data Table Starts -->
@@ -62,9 +64,10 @@
             <table *ngIf="!isLoading" class="table table-hover table-sm">
               <thead>
                 <tr>
-                  <th scope="col-auto">Name</th>
-                  <th scope="col-auto">Date Created</th>
-                  <th scope="col-auto">Delete</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Date Created</th>
+                  <th scope="col">Delete</th>
+                  <th scope="col">Edit</th>
                 </tr>
               </thead>
               <tbody>
@@ -75,6 +78,16 @@
                   </td>
                   <td>{{folder.updated.seconds * 1000 | date}}</td>
                   <td><i class="fas fa-times ml-3" (click)="folderDelete(i)"></i></td>
+                  <td><span class="edit-btn" (click)="editFolder(i)">Edit</span></td>
+                </tr>
+                <tr *ngFor="let file of files; let i=index">
+                  <td>
+                    <i class="material-icons mr-2 align-middle">note</i>
+                    <span class="align-middle">{{file.name}}</span>
+                  </td>
+                  <td>{{file.updated.seconds * 1000 | date}}</td>
+                  <td><i class="fas fa-times ml-3" (click)="folderDelete(i)"></i></td>
+                  <td><span class="edit-btn" (click)="editFolder(i)">Edit</span></td>
                 </tr>
               </tbody>
             </table>
@@ -90,4 +103,8 @@
     </mat-sidenav-content>
   </mat-sidenav-container>
 
+</div>
+
+<div class="loading" *ngIf="!loggedIn">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
 </div>

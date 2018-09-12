@@ -1,3 +1,8 @@
+.loading {
+  margin-top: 5rem;
+  margin-left: 5rem;
+}
+
 .login-btn {
   text-decoration: none;
   color: #ffffff;
@@ -37,6 +42,34 @@
   margin-left: 2rem;
   width: 70%;
   height: 20%;
+}
+
+.upload-btn {
+  padding-right: 10rem;
+  padding-left: 1rem;
+  cursor: pointer;
+}
+
+.inputfile {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.inputfile + label {
+  font-size: 1.25em;
+  font-weight: 700;
+  color: white;
+  background-color: black;
+  display: inline-block;
+}
+
+.inputfile:focus + label,
+.inputfile + label:hover {
+  background-color: red;
 }
 
 .new-btn {
@@ -146,6 +179,9 @@ table {
       border-top: none !important;
       th {
         border-top: 0;
+        &:last-child {
+          padding-left: 24px;
+        }
       }
     }
   }
@@ -157,6 +193,15 @@ table {
           color: #757575;
           cursor: pointer;
           font-size: 18px;
+        }
+        .edit-btn {
+          cursor: pointer;
+          padding: 2px 20px 2px 20px;
+          border: 1px solid #e6e6e6;
+          border-radius: 24px;
+          &:hover {
+            background-color: #80ffb5;
+          }
         }
       }
     }
