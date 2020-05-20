@@ -71,6 +71,7 @@
                 </tr>
               </thead>
               <tbody>
+                <!-- folders list -->
                 <tr *ngFor="let folder of folders; let i=index">
                   <td>
                     <i class="material-icons mr-2 align-middle">folder</i>
@@ -80,13 +81,18 @@
                   <td><i class="fas fa-times ml-3" (click)="folderDelete(i)"></i></td>
                   <td><span class="edit-btn" (click)="editFolder(i)">Edit</span></td>
                 </tr>
+                <!-- uploading file -->
+                <tr *ngIf="uploading==='uploading'">
+                  <td>uploading file...</td>
+                </tr>
+                <!-- files list -->
                 <tr *ngFor="let file of files; let i=index">
                   <td>
                     <i class="material-icons mr-2 align-middle">note</i>
                     <span class="align-middle">{{file.name}}</span>
                   </td>
                   <td>{{file.updated.seconds * 1000 | date}}</td>
-                  <td><i class="fas fa-times ml-3" (click)="folderDelete(i)"></i></td>
+                  <td><i class="fas fa-times ml-3" (click)="fileDelete(i)"></i></td>
                   <td><span class="edit-btn" (click)="editFolder(i)">Edit</span></td>
                 </tr>
               </tbody>

@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit {
   folderName: string;
   folders: Folder[] = [];
   files: File[] = [];
+  uploading = 'none';
   dataSource: any;
   displayedColumns: string[] = ['select', 'name', 'updated'];
   selection = new SelectionModel<Folder>(true, []);
@@ -59,22 +60,9 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.checkLogin().subscribe(
       res => {
-        this.getData().subscribe(
-          res => {
-            this.itemsService.getFilesUrl().subscribe(
-              res => {
-                // console.log('url =>', res);
-              },
-              err => {
-                // console.log('err =>', err);
-              }
-            );
-          },
-          err => {}
-        );
+        this.getData().subscribe(res => {}, err => {});
       },
       err => {
-        // this.router.navigate(['/login']);
         this.zone.run(() => this.router.navigate(['/login']));
       }
     );
@@ -82,29 +70,36 @@ export class HomeComponent implements OnInit {
 
   onFileSelected(event) {
     // console.log('file selected =>', event.path[0].files[0]);
+    this.uploading = 'uploading';
     const file = event.path[0].files[0];
-    console.log('file =>', file.name);
+    // console.log('file =>', file);
     this.itemsService.storeFile(file).subscribe(
       res => {
-        this.itemsService.getFilesUrl().subscribe(res => {
-          console.log('url =>', res);
-          this.files.unshift({
-            name: file.name,
-            updated: new Date(),
-            url: res
-          });
-          this.itemsService.addFiles({ content: this.files }, this.user.uid);
-        });
+        if (res) {
+          this.itemsService.getFileUrl(res).subscribe(
+            res => {
+              console.log('url =>', res);
+              this.uploading = 'complete';
+              this.files.unshift({
+                name: file.name,
+                updated: new Date(),
+                url: res
+              });
+              this.itemsService.addFiles(
+                { content: this.files },
+                this.user.uid
+              );
+            },
+            err => {
+              console.log('ERROR fetching url =>', err);
+            }
+          );
+        }
       },
       err => {
         // console.log(err);
       }
     );
-  }
-
-  folderDelete(i) {
-    this.folders.splice(i, 1);
-    this.itemsService.deleteFolder({ content: this.folders }, this.user.uid);
   }
 
   checkLogin() {
@@ -183,6 +178,31 @@ export class HomeComponent implements OnInit {
         this.itemsService.addFolders({ content: this.folders }, this.user.uid);
       }
     });
+  }
+
+  folderDelete(i) {
+    this.folders.splice(i, 1);
+    this.itemsService.deleteFolder({ content: this.folders }, this.user.uid);
+  }
+
+  fileDelete(i) {
+    let fileDelName = this.files[i].name;
+    this.files.splice(i, 1);
+    this.itemsService
+      .deleteFile(
+        { content: this.files },
+        this.user.uid,
+        'images/',
+        fileDelName
+      )
+      .subscribe(
+        res => {
+          console.log('file deleted');
+        },
+        err => {
+          console.log('ERROR in file deleting =>', err);
+        }
+      );
   }
 }
 

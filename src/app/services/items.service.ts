@@ -9,7 +9,7 @@ import {
   AngularFirestoreDocument
 } from 'angularfire2/firestore';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, finalize } from 'rxjs/operators';
 import { Item, Folder } from '../models/user.model';
 
 @Injectable({
@@ -22,7 +22,8 @@ export class ItemsService {
   private fileCollection: any;
   files: Observable<FileItem[]>;
 
-  profileUrl: Observable<string | null>;
+  downloadURL: Observable<string | null>;
+  delete: Observable<any | null>;
 
   constructor(
     public afAuth: AngularFireAuth,
@@ -41,8 +42,8 @@ export class ItemsService {
     this.folderCollection.set(folders);
   }
 
-  deleteFolder(folders: Item, id: any) {
-    this.folderCollection.set(folders);
+  deleteFolder(folder: Item, id: any) {
+    this.folderCollection.set(folder);
   }
 
   getFiles(id: any): any {
@@ -61,19 +62,63 @@ export class ItemsService {
       if (file.type === 'image/jpeg' || file.type === 'image/png') {
         filePath = 'images/' + file.name;
       }
+      const fileRef = this.storage.ref(filePath);
       const task = this.storage.upload(filePath, file);
-      if (task) {
-        observer.next(task);
-      } else {
-        observer.error(false);
-      }
-      observer.complete();
+      // get notified when the download URL is available
+      task
+        .snapshotChanges()
+        .pipe(finalize(() => (this.downloadURL = fileRef.getDownloadURL())))
+        .subscribe(
+          res => {
+            console.log('progress =>', this.downloadURL, res);
+            observer.next(false);
+          },
+          err => {
+            console.log('ERROR in downloading URL =>', err);
+            observer.error(false);
+          },
+          () => {
+            observer.next(filePath);
+          }
+        );
     });
   }
 
-  getFilesUrl() {
-    const ref = this.storage.ref('images/File.jpg');
-    this.profileUrl = ref.getDownloadURL();
-    return this.profileUrl;
+  getFileUrl(filePath) {
+    const ref = this.storage.ref(filePath);
+    this.downloadURL = ref.getDownloadURL();
+    return this.downloadURL;
+  }
+
+  deleteFile(file: FileItem, id: any, filePath, name) {
+    return new Observable(observer => {
+      this.fileCollection.set(file);
+      this.deleteFileFromStorage(file, filePath, name).subscribe(
+        res => {
+          observer.next(res);
+        },
+        err => {
+          observer.error(false);
+        }
+      );
+    });
+  }
+
+  deleteFileFromStorage(file: FileItem, filePath, name) {
+    const ref = this.storage.ref(filePath);
+    this.delete = ref.child(name).delete();
+    return this.delete;
+    // return new Observable(observer => {
+    //   const ref = this.storage.ref(filePath);
+    //   ref.delete().subscribe(
+    //     res => {
+    //       observer.next(res);
+    //     },
+    //     err => {
+    //       console.log('ERROR in deleteFileFromStorage');
+    //       observer.error(false);
+    //     }
+    //   );
+    // });
   }
 }
